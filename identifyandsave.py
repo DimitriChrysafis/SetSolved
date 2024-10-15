@@ -1,4 +1,3 @@
-# identify_and_save_cards.py
 
 import cv2
 import numpy as np
