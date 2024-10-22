@@ -1,6 +1,6 @@
 # SetSolved
 <div style="display: flex; justify-content: center;">
-    <img src="demos/flowchart.png" width="200">
+    <img src="demos/flowchart.png" width="500">
 </div>
 
 <div style="display: flex; justify-content: center;">
