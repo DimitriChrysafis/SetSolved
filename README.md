@@ -17,3 +17,8 @@
     <img src="demos/combined_image.png" width="1000">
 </div>
 
+## Locate Sets
+<div style="display: flex; justify-content: center;">
+    <img src="demos/sets.png" width="1000">
+</div>
+
