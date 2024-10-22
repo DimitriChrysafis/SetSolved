@@ -19,6 +19,6 @@
 
 ## Locate Sets
 <div style="display: flex; justify-content: center;">
-    <img src="demos/sets.png" width="1000">
+    <img src="demos/sets.png" width="200">
 </div>
 
