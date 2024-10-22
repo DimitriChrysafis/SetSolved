@@ -2,6 +2,9 @@
 <div style="display: flex; justify-content: center;">
     <img src="demos/flowchart.png" width="500">
 </div>
+<div style="display: flex; justify-content: center;">
+    <img src="demos/combined_image.png" width="500">
+</div>
 
 <div style="display: flex; justify-content: center;">
     <img src="demos/edges_filtered.png" width="300">
