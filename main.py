@@ -1,82 +1,81 @@
 import os
 import torch
 import torchvision
-import torchvision.transforms as transforms
+import torchvision.transforms as t
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
-def main():
-    data_dir = '/Users/dimitrichrysafis/Desktop/sorted_dataset/'
+def m():
+    d = '/Users/dimitrichrysafis/Desktop/sorted_dataset/'
 
-    transform = transforms.Compose([
-        transforms.Resize((128, 128)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    tr = t.Compose([
+        t.Resize((128, 128)),
+        t.ToTensor(),
+        t.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
 
-    dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=transform)
-    data_loader = DataLoader(dataset, batch_size=32, shuffle=True, num_workers=4)
+    ds = torchvision.datasets.ImageFolder(root=d, transform=tr)
+    dl = DataLoader(ds, batch_size=32, shuffle=True, num_workers=4)
 
-    class SimpleCNN(nn.Module):
+    class S(nn.Module):
         def __init__(self):
-            super(SimpleCNN, self).__init__()
-            self.conv1 = nn.Conv2d(3, 16, 3, padding=1)
-            self.conv2 = nn.Conv2d(16, 32, 3, padding=1)
-            self.conv3 = nn.Conv2d(32, 64, 3, padding=1)
-            self.fc1 = nn.Linear(64 * 16 * 16, 512)
-            self.fc2 = nn.Linear(512, 81)
+            super(S, self).__init__()
+            self.c1 = nn.Conv2d(3, 16, 3, padding=1)
+            self.c2 = nn.Conv2d(16, 32, 3, padding=1)
+            self.c3 = nn.Conv2d(32, 64, 3, padding=1)
+            self.f1 = nn.Linear(64 * 16 * 16, 512)
+            self.f2 = nn.Linear(512, 81)
 
         def forward(self, x):
-            x = torch.relu(self.conv1(x))
+            x = torch.relu(self.c1(x))
             x = torch.max_pool2d(x, 2)
-            x = torch.relu(self.conv2(x))
+            x = torch.relu(self.c2(x))
             x = torch.max_pool2d(x, 2)
-            x = torch.relu(self.conv3(x))
+            x = torch.relu(self.c3(x))
             x = torch.max_pool2d(x, 2)
             x = x.view(-1, 64 * 16 * 16)
-            x = torch.relu(self.fc1(x))
-            x = self.fc2(x)
+            x = torch.relu(self.f1(x))
+            x = self.f2(x)
             return x
 
-    # Check if MPS is available, otherwise fallback to CPU
-    device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
+    e = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
 
-    model = SimpleCNN().to(device)
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    m = S().to(e)
+    c = nn.CrossEntropyLoss()
+    o = optim.Adam(m.parameters(), lr=0.001)
 
-    num_epochs = 30
-    for epoch in range(num_epochs):
-        model.train()
-        running_loss = 0.0
-        for images, labels in data_loader:
-            images, labels = images.to(device), labels.to(device)
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            running_loss += loss.item()
-        print(f"Epoch {epoch+1}/{num_epochs}, Loss: {running_loss/len(data_loader)}")
+    ne = 30
+    for ep in range(ne):
+        m.train()
+        r = 0.0
+        for img, lab in dl:
+            img, lab = img.to(e), lab.to(e)
+            o.zero_grad()
+            out = m(img)
+            l = c(out, lab)
+            l.backward()
+            o.step()
+            r += l.item()
+        print(f"Epoch {ep+1}/{ne}, Loss: {r/len(dl)}")
 
-    torch.save(model.state_dict(), 'card_classifier.pth')
+    torch.save(m.state_dict(), 'card_classifier.pth')
 
     with open('class_names.txt', 'w') as f:
-        for name in dataset.classes:
-            f.write(f"{name}\n")
+        for n in ds.classes:
+            f.write(f"{n}\n")
 
-    model.eval()
-    correct = 0
-    total = 0
+    m.eval()
+    c = 0
+    t = 0
     with torch.no_grad():
-        for images, labels in data_loader:
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+        for img, lab in dl:
+            img, lab = img.to(e), lab.to(e)
+            out = m(img)
+            _, p = torch.max(out.data, 1)
+            t += lab.size(0)
+            c += (p == lab).sum().item()
 
-    print(f'Accuracy: {100 * correct / total}%')
+    print(f'Accuracy: {100 * c / t}%')
 
 if __name__ == '__main__':
-    main()
+    m()
